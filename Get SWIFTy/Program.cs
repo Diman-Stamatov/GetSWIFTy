@@ -1,3 +1,4 @@
+using Get_SWIFTy.Helpers;
 using Get_SWIFTy.Service;
 using Get_SWIFTy.Service.Interface;
 using Microsoft.OpenApi.Models;
@@ -10,7 +11,10 @@ namespace Get_SWIFTy
         {
             var builder = WebApplication.CreateBuilder(args);
             
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(
+                options => options.InputFormatters.Insert(
+                    options.InputFormatters.Count, new PlainTextFormatter()));
+
             builder.Services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "GetSwiftyAPI", Version = "v1" });

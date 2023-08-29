@@ -18,6 +18,7 @@ public class SwiftController : ControllerBase
     }
         
     [HttpPost()]
+    [Consumes("text/plain")]
     public IActionResult LogSwiftMessage([FromBody] string message)
     {        
         if (string.IsNullOrWhiteSpace(message))
