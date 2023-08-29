@@ -1,6 +1,9 @@
+using Get_SWIFTy.Database;
+using Get_SWIFTy.Database.Interface;
 using Get_SWIFTy.Helpers;
 using Get_SWIFTy.Service;
 using Get_SWIFTy.Service.Interface;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.OpenApi.Models;
 
 namespace Get_SWIFTy
@@ -20,6 +23,7 @@ namespace Get_SWIFTy
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "GetSwiftyAPI", Version = "v1" });
             });
 
+            builder.Services.AddScoped<ISwiftDB, SwiftDB>();
             builder.Services.AddScoped<ISwiftService, SwiftService>();
 
             var app = builder.Build();
@@ -38,6 +42,7 @@ namespace Get_SWIFTy
                 endpoints.MapDefaultControllerRoute();
 
             });
+            
 
             app.Run();
         }

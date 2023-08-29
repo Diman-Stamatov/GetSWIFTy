@@ -1,4 +1,6 @@
-﻿using Get_SWIFTy.Service.Interface;
+﻿using Get_SWIFTy.Database.Interface;
+using Get_SWIFTy.Model;
+using Get_SWIFTy.Service.Interface;
 using System.Text.RegularExpressions;
 
 namespace Get_SWIFTy.Service;
@@ -8,6 +10,12 @@ public class SwiftService : ISwiftService
     private const string FieldPatternEnding = "(.*?)}";
     private const string FreeformFieldPatternEnding = @"([^\n]+)";
 
+    private readonly ISwiftDB swiftDB;
+
+    public SwiftService(ISwiftDB swiftDB)
+    {
+        this.swiftDB = swiftDB;
+    }
     public string LogMessage(string message)
     {
          
@@ -18,7 +26,20 @@ public class SwiftService : ISwiftService
         string relatedReference = ParseField(message, ":21:", FreeformFieldPatternEnding);
         string narrative = ParseField(message, ":79:", FieldPatternEnding);
         string authenticationCode = ParseField(message, "MAC:", FieldPatternEnding);
-        return $"The message was logged successfully.";
+
+        var newMessage = new Message
+        {
+            SenderReference = senderReference,
+            MessageType = messageType,
+            TransactionReference = transactionReference,
+            RelatedReference = relatedReference,
+            Narrative = narrative,
+            AuthenticationCode = authenticationCode
+        };
+
+        string databaseResponse = swiftDB.AddMessage(newMessage);
+
+        return databaseResponse;
     }
 
     static string ParseField(string message, string fieldCode, string patternEnding)
