@@ -5,21 +5,26 @@ namespace Get_SWIFTy.Service;
 
 public class SwiftService : ISwiftService
 {
+    private const string FieldPatternEnding = "(.*?)}";
+    private const string FreeformFieldPatternEnding = @"([^\n]+)";
+
     public string LogMessage(string message)
     {
-        string senderReference = ParseField(message, "1:");
-        string messageType = ParseField(message, "2:");
-        string sequenceNumber = ParseField(message, "3:");
-        string transactionReference = ParseField(message, "20:");
-        string relatedReference = ParseField(message, "21:");
-        string narrative = ParseField(message, "79:");
-        return $"The message was logged successfully: {message}";
+         
+
+        string senderReference = ParseField(message, "1:", FieldPatternEnding);
+        string messageType = ParseField(message, "2:", FieldPatternEnding);
+        string transactionReference = ParseField(message, ":20:", FreeformFieldPatternEnding);
+        string relatedReference = ParseField(message, ":21:", FreeformFieldPatternEnding);
+        string narrative = ParseField(message, ":79:", FieldPatternEnding);
+        string authenticationCode = ParseField(message, "MAC:", FieldPatternEnding);
+        return $"The message was logged successfully.";
     }
 
-    static string ParseField(string message, string tag)
+    static string ParseField(string message, string fieldCode, string patternEnding)
     {
-        string pattern = $@"{tag}([^\n]+)";
-        Match match = Regex.Match(message, pattern);
+        string pattern = $@"{fieldCode}{patternEnding}";
+        Match match = Regex.Match(message, pattern, RegexOptions.Singleline);
         return match.Success ? match.Groups[1].Value : null;
     }
 
