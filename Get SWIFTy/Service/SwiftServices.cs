@@ -54,7 +54,7 @@ public class SwiftServices : ISwiftServices
     {
         string pattern = $@"{fieldCode}{patternEnding}";
         Match match = Regex.Match(message, pattern, RegexOptions.Singleline);
-        return match.Success ? match.Groups[1].Value : null;
+        return match.Success ? match.Groups[1].Value : "";
     }
 
     
