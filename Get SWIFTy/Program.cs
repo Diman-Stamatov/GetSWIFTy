@@ -5,6 +5,7 @@ using Get_SWIFTy.Service;
 using Get_SWIFTy.Service.Interface;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 
 namespace Get_SWIFTy
 {
@@ -23,8 +24,8 @@ namespace Get_SWIFTy
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "GetSwiftyAPI", Version = "v1" });
             });
 
-            builder.Services.AddScoped<ISwiftDB, SwiftDB>();
-            builder.Services.AddScoped<ISwiftService, SwiftService>();
+            builder.Services.AddScoped<ISwiftDbAccess, SwiftDbAccess>();
+            builder.Services.AddScoped<ISwiftServices, SwiftServices>();
 
             var app = builder.Build();
 

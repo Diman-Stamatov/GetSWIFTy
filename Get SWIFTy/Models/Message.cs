@@ -2,8 +2,6 @@
 
 public class Message
 {
-    public static int NextId = 1;
-
     public int Id;
     public string SenderReference;
     public string MessageType;
