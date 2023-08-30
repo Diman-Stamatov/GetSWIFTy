@@ -17,18 +17,35 @@ public class SwiftController : ControllerBase
     {
         this.swiftService = swiftService;        
     }
-        
-    [HttpPost()]
+
+    [HttpPost("/text")]
     [Consumes("text/plain")]
-    public IActionResult LogSwiftMessage([FromBody] string message)
-    {        
+    public IActionResult LogSwiftMessageText([FromBody] string message)
+    {
         if (string.IsNullOrWhiteSpace(message))
         {
             return StatusCode(StatusCodes.Status400BadRequest, EmptyMessageError);
-        }    
-
+        }
+                
         string logMessage = swiftService.ParseMessage(message);
         return StatusCode(StatusCodes.Status200OK, logMessage);
+    }
+
+
+    [HttpPost("/file")]
+    public IActionResult LogSwiftMessageFile(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, EmptyMessageError);
+        }
+
+        using (var streamReader = new StreamReader(file.OpenReadStream()))
+        {
+            string message = streamReader.ReadToEnd();
+            string logMessage = swiftService.ParseMessage(message);
+            return StatusCode(StatusCodes.Status200OK, logMessage);
+        }
     }
 
     [HttpGet()]    
