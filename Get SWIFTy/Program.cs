@@ -5,6 +5,7 @@ using Get_SWIFTy.Service;
 using Get_SWIFTy.Service.Interface;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text.Json.Serialization;
 
 namespace Get_SWIFTy
@@ -14,7 +15,9 @@ namespace Get_SWIFTy
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            
+
+            builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
+
             builder.Services.AddControllers(
                 options => options.InputFormatters.Insert(
                     options.InputFormatters.Count, new PlainTextFormatter()));
@@ -36,6 +39,8 @@ namespace Get_SWIFTy
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "GetSwifty API V1");
                 options.RoutePrefix = "api/swagger";
             });
+
+            app.UseSerilogRequestLogging();
 
             app.UseEndpoints(endpoints =>
             {
